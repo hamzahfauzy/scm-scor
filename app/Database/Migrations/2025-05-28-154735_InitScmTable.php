@@ -35,6 +35,7 @@ class InitScmTable extends Migration
             'supplier_id'   => ['type' => 'BIGINT', 'unsigned' => true, 'null' => true],
             'jumlah'        => ['type' => 'FLOAT'],
             'tanggal'       => ['type' => 'DATE'],
+            'tanggal_pesan' => ['type' => 'DATE'],
             'keterangan'    => ['type' => 'TEXT'],
         ]);
         $this->forge->addKey('id', true);
