@@ -153,7 +153,6 @@ class InitScmTable extends Migration
         $this->forge->dropTable('tb_retur_produk');
         $this->forge->dropTable('tb_retur_penjualan');
         $this->forge->dropTable('tb_pengiriman');
-        $this->forge->dropTable('tb_produksi_produk');
         $this->forge->dropTable('tb_produksi');
         $this->forge->dropTable('tb_penjualan_produk');
         $this->forge->dropTable('tb_penjualan');
