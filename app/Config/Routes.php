@@ -12,7 +12,7 @@ $routes->post('/login', 'Auth\LoginController::auth');
 $routes->get('/logout', 'Auth\LoginController::logout');
 
 
-$routes->get('/', 'Home::dashboard', ['filter' => 'auth']);
+$routes->get('/', 'Home::index');
 $routes->get('/dashboard', 'Home::dashboard', ['filter' => 'auth']);
 
 $menu = Menu::get();

@@ -6,7 +6,7 @@ use App\Libraries\Page;
 
 class Home extends BaseController
 {
-    public function index(): string
+    public function dashboard(): string
     {
         $page = new Page;
         $page->setTitle('Dashboard');
@@ -83,8 +83,8 @@ GROUP BY k.bahan_baku_id');
         return $page->render('home/dashboard', compact('presentaseProduk', 'rop', 'avgLeadTime','produksiHarian','forcasting','forcastBahan'));
     }
 
-    public function dashboard(): string
+    public function index(): string
     {
-        return $this->index();
+        return view('landing');
     }
 }
