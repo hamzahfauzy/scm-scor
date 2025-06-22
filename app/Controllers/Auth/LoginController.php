@@ -2,6 +2,8 @@
 
 namespace App\Controllers\Auth;
 
+use App\Models\Scm\Kustomer;
+use App\Models\Scm\Supplier;
 use App\Models\User;
 use CodeIgniter\Controller;
  
@@ -28,7 +30,8 @@ class LoginController extends Controller
                     'id'       => $data['id'],
                     'name'     => $data['name'],
                     'email'    => $data['email'],
-                    'logged_in'     => TRUE
+                    'logged_in'     => TRUE,
+                    'level' => (new Supplier)->where('user_id', $data['id'])->first() ? 'Supplier' : ((new Kustomer)->where('user_id', $data['id'])->first() ? 'Kustomer' : 'Admin')
                 ];
                 $session->set($ses_data);
                 return redirect()->to('/dashboard');

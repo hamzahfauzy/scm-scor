@@ -24,13 +24,22 @@ class StokController extends CrudController {
 
     protected function getModel()
     {
-        $bahanBaku = $_GET['filter']['bahan_baku_id'];
         $model = (new $this->model)
             ->select('tb_bahan_baku_stok.*, tb_bahan_baku.nama nama_bahan, tb_supplier.nama nama_supplier')
-            ->where('bahan_baku_id', $bahanBaku)
+            // ->where('bahan_baku_id', $bahanBaku)
             ->join('tb_bahan_baku', 'tb_bahan_baku.id = tb_bahan_baku_stok.bahan_baku_id')
             ->join('tb_supplier', 'tb_supplier.id = tb_bahan_baku_stok.supplier_id', 'LEFT')
             ;
+
+        if(session()->get('level') == 'Admin')
+        {
+            $bahanBaku = $_GET['filter']['bahan_baku_id'];
+            $model->where('bahan_baku_id', $bahanBaku);
+        }
+        else
+        {
+            $model->where('tb_supplier.user_id', session()->get('id'));
+        }
 
         return $model;
     }
@@ -38,30 +47,46 @@ class StokController extends CrudController {
     public function index()
     {
         $data = $this->getModel()->findAll();
-        $bahanBaku = (new BahanBaku)->where('id', $_GET['filter']['bahan_baku_id'])->first();
-
+        
         $page = new Page;
         $page->setTitle('Data ' . $this->getTitle());
         $page->setSlug($this->getSlug());
-        $page->setBreadcrumbs([
-            [
-                'label' => 'Bahan Baku',
-                'url' => '/bahan-baku'
-            ],
-            [
-                'label' => $bahanBaku['nama'],
-                'url' => false
-            ],
-            [
-                'label' => 'Stok',
-                'url' => false
-            ],
-        ]);
+        $view = 'crud/index';
 
-        return $page->render('crud/index', [
+        if(session()->get('level') == 'Admin')
+        {
+            $bahanBaku = (new BahanBaku)->where('id', $_GET['filter']['bahan_baku_id'])->first();
+            $page->setBreadcrumbs([
+                [
+                    'label' => 'Bahan Baku',
+                    'url' => '/bahan-baku'
+                ],
+                [
+                    'label' => $bahanBaku['nama'],
+                    'url' => false
+                ],
+                [
+                    'label' => 'Stok',
+                    'url' => false
+                ],
+            ]);
+        }
+        else
+        {
+            $page->setBreadcrumbs([
+                [
+                    'label' => 'Bahan Baku',
+                    'url' => '/stok'
+                ],
+            ]);
+
+            $view = 'scm/stok';
+        }
+
+        return $page->render($view, [
             'data' => $data,
             'detail_button' => function($data){
-                return $this->detailButton($data);
+                return $data['status'] == 'REQUEST' ? '<a href="/stok/confirm/'.$data['id'].'" class="btn btn-sm btn-success" onclick="return confirm(\'Apakah anda yakin konfirmasi permintaan ini ?\')">Konfirmasi</a>' : '';
             },
             'columns' => $this->columns()
         ]);
@@ -85,6 +110,9 @@ class StokController extends CrudController {
             'keterangan' => [
                 'label' => 'Keterangan'
             ],
+            'status' => [
+                'label' => 'Status'
+            ]
         ];
     }
 
@@ -139,6 +167,22 @@ class StokController extends CrudController {
                 'type' => 'textarea',
             ],
         ];
+    }
+
+    protected function beforeInsert($data)
+    {
+        $data['status'] = 'REQUEST';
+
+        return $data;
+    }
+
+    function confirm($id)
+    {
+        (new Stok)->update($id, [
+            'status' => 'CONFIRM'
+        ]);
+
+        return redirect()->to('/'. $this->getSlug() . (isset($_GET['filter']) ? '?'.http_build_query($_GET) : ''));
     }
 
 }

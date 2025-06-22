@@ -7,6 +7,6 @@ use CodeIgniter\Model;
 class Supplier extends Model {
 
     protected $table = 'tb_supplier';
-    protected $allowedFields = ['nama', 'alamat', 'no_hp'];
+    protected $allowedFields = ['nama', 'alamat', 'no_hp','user_id'];
 
 }

@@ -136,6 +136,7 @@ class CrudController extends BaseController
     public function update($id)
     {
         $data = $this->request->getPost();
+        $data['id'] = $id;
         $data = $this->beforeUpdate($data);
         if ($this->getModel()->update($id, $data)) {
             $this->afterUpdate($id, $this->request->getPost());

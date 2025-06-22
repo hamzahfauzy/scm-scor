@@ -19,12 +19,17 @@ class PenjualanController extends CrudController {
         $model->select('tb_penjualan.*, tb_kustomer.nama nama_kustomer')
             ->join('tb_kustomer', 'tb_kustomer.id = tb_penjualan.kustomer_id');
 
+        if(session()->get('level') == 'Kustsomer')
+        {
+            $model->where('tb_kustomer.user_id', session()->get('id'));
+        }
+
         return $model;
     }
 
     protected function getTitle()
     {
-        return 'Penjualan';
+        return session()->get('level') == 'Admin' ? 'Penjualan' : 'Pembelian';
     }
 
     protected function getSlug()
@@ -47,16 +52,29 @@ class PenjualanController extends CrudController {
             'total_produk' => [
                 'label' => 'Total Produk'
             ],
+            'status' => [
+                'label' => 'Status'
+            ]
         ];
     }
 
     protected function fields()
     {
-        $kustomer = (new Kustomer)->findAll();
-        $options = [0 => 'Pilih Kustomer'];
-        foreach($kustomer as $item)
+        if(session()->get('level') == 'Admin')
         {
-            $options[$item['id']] = $item['nama'];
+            $options = [0 => 'Pilih Kustomer'];
+            $kustomer = (new Kustomer)->findAll();
+            foreach($kustomer as $item)
+            {
+                $options[$item['id']] = $item['nama'];
+            }
+        }
+        else
+        {
+            $kustomer = (new Kustomer)->where('user_id', session()->get('id'))->first();
+            $options = [
+                $kustomer['id'] => $kustomer['nama']
+            ];
         }
         return [
             'tanggal' => [
@@ -102,6 +120,7 @@ class PenjualanController extends CrudController {
     {
         $request['total_produk'] = array_sum(array_column($request['items'], 'jumlah'));
         $request['jumlah_produk'] = count($request['items']);
+        $request['status'] = session()->get('level') == 'Admin' ? 'CONFIRM' : 'REQUEST';
 
         return $request;
     }
@@ -117,7 +136,23 @@ class PenjualanController extends CrudController {
 
     protected function detailButton($data)
     {
-        return '<a href="/penjualan-produk?filter[penjualan_id]='.$data['id'].'" class="btn btn-sm btn-info">Detail</a>';
+        $btn = '<a href="/penjualan-produk?filter[penjualan_id]='.$data['id'].'" class="btn btn-sm btn-info">Detail</a>';
+
+        if($data['status'] == 'REQUEST')
+        {
+            $btn .= ' <a href="/penjualan/confirm/'.$data['id'].'" class="btn btn-sm btn-success" onclick="return confirm(\'Apakah anda yakin konfirmasi penjualan ini ?\')">Konfirmasi</a>';
+        }
+
+        return $btn;
+    }
+
+    function confirm($id)
+    {
+        (new Penjualan)->update($id, [
+            'status' => 'CONFIRM'
+        ]);
+
+        return redirect()->to('/'. $this->getSlug() . (isset($_GET['filter']) ? '?'.http_build_query($_GET) : ''));
     }
 
 }
