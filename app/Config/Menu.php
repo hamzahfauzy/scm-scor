@@ -23,7 +23,8 @@ class Menu {
         if($level == 'Supplier')
         {
             return [
-                static::buildItem('Bahan Baku', false, 'stok', 'fas fa-box', 'Scm\StokController'),
+                static::buildItem('Bahan Baku', false, 'bahan-baku', 'fas fa-box', 'Scm\BahanBakuController'),
+                static::buildItem('Permintaan Stok', false, 'stok', 'fas fa-box', 'Scm\StokController'),
             ];
         }
         
@@ -38,9 +39,9 @@ class Menu {
             static::buildItem('Supplier', false, 'suplier', 'fas fa-users', 'Scm\SuplierController'),
             static::buildItem('Bahan Baku', false, 'bahan-baku', 'fas fa-box', 'Scm\BahanBakuController'),
             static::buildItem('Produk', false, 'produk', 'fas fa-box', 'Scm\ProdukController'),
-            static::buildItem('Kustomer', false, 'kustomer', 'fas fa-users', 'Scm\KustomerController'),
-            static::buildItem('Penjualan', false, 'penjualan', 'fas fa-users', 'Scm\PenjualanController'),
-            static::buildItem('Retur', false, 'retur', 'fas fa-undo-alt', 'Scm\ReturController'),
+            // static::buildItem('Kustomer', false, 'kustomer', 'fas fa-users', 'Scm\KustomerController'),
+            // static::buildItem('Penjualan', false, 'penjualan', 'fas fa-users', 'Scm\PenjualanController'),
+            // static::buildItem('Retur', false, 'retur', 'fas fa-undo-alt', 'Scm\ReturController'),
             static::buildItem('Produksi', false, 'produksi', 'fas fa-box', 'Scm\ProduksiController'),
         ];
     }

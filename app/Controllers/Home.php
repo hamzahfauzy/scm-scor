@@ -57,19 +57,20 @@ ORDER BY stok_saat_ini ASC');
     AVG(DATEDIFF(tanggal, tanggal_pesan)) AS avg_lead_time
 FROM `tb_bahan_baku_stok`
 LEFT JOIN `tb_bahan_baku` ON tb_bahan_baku.id = tb_bahan_baku_stok.bahan_baku_id
-WHERE supplier_id IS NOT NULL
+WHERE tb_bahan_baku_stok.supplier_id IS NOT NULL
 GROUP BY bahan_baku_id');
 
-        $forcasting = $db->query('SELECT 
-    produk_id,
-    tb_produk.nama,
-    MONTH(tanggal) AS bulan,
-    SUM(jumlah) AS total_terjual
-FROM tb_penjualan_produk
-JOIN tb_penjualan ON tb_penjualan.id = penjualan_id
-JOIN tb_produk ON tb_produk.id = tb_penjualan_produk.produk_id
-WHERE tanggal >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
-GROUP BY produk_id, MONTH(tanggal)');
+//         $forcasting = $db->query('SELECT 
+//     produk_id,
+//     tb_produk.nama,
+//     MONTH(tanggal) AS bulan,
+//     SUM(jumlah) AS total_terjual
+// FROM tb_penjualan_produk
+// JOIN tb_penjualan ON tb_penjualan.id = penjualan_id
+// JOIN tb_produk ON tb_produk.id = tb_penjualan_produk.produk_id
+// WHERE tanggal >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+// GROUP BY produk_id, MONTH(tanggal)');
+$forcasting = [];
 
         $forcastBahan = $db->query('SELECT 
     k.bahan_baku_id,

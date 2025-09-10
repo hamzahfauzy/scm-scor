@@ -114,6 +114,7 @@
             </div>
         </div>
         
+        <?php /*
         <div class="col-12 col-md-6">
             <div class="card">
                 <div class="card-header">
@@ -138,7 +139,7 @@
                     </table>
                 </div>
             </div>
-        </div>
+        </div> */ ?>
         
         <div class="col-12 col-md-6">
             <div class="card">

@@ -178,6 +178,13 @@ class StokController extends CrudController {
 
     function confirm($id)
     {
+        $stok = (new Stok)->find($id);
+        $bahanBaku = (new BahanBaku)->find($stok->bahan_baku_id);
+
+        (new BahanBaku)->update($id, [
+            'stok_supplier' => $bahanBaku->stok_supplier - $stok->jumlah
+        ]);
+
         (new Stok)->update($id, [
             'status' => 'CONFIRM'
         ]);

@@ -31,7 +31,7 @@ class LoginController extends Controller
                     'name'     => $data['name'],
                     'email'    => $data['email'],
                     'logged_in'     => TRUE,
-                    'level' => (new Supplier)->where('user_id', $data['id'])->first() ? 'Supplier' : ((new Kustomer)->where('user_id', $data['id'])->first() ? 'Kustomer' : 'Admin')
+                    'level' => (new Supplier)->where('user_id', $data['id'])->first() ? 'Supplier' : 'Admin'
                 ];
                 $session->set($ses_data);
                 return redirect()->to('/dashboard');

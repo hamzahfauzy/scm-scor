@@ -521,5 +521,17 @@
 
     <!-- Kaiadmin JS -->
     <script src="/assets/js/kaiadmin.min.js"></script>
+    <script>
+    $('select#bahan_baku_id').change(function(){
+      $('#jumlah').val(0)
+      const val = $(this).val()
+      fetch('/detail-bahan-baku/' + val)
+      .then(res => res.json())
+      .then(res => {
+        console.log(res)
+        $('#jumlah').val(res.data.stok_supplier)
+      })
+    })
+    </script>
   </body>
 </html>

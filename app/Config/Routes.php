@@ -14,6 +14,7 @@ $routes->get('/logout', 'Auth\LoginController::logout');
 
 $routes->get('/', 'Home::index');
 $routes->get('/dashboard', 'Home::dashboard', ['filter' => 'auth']);
+$routes->get('/detail-bahan-baku/(:num)', 'Scm\BahanBakuController::detailBahanBaku/$1', ['filter' => 'auth']);
 
 $routes->get('/penjualan/confirm/(:num)', 'Scm\PenjualanController::confirm/$1', ['filter' => 'auth']);
 $routes->get('/stok/confirm/(:num)', 'Scm\StokController::confirm/$1', ['filter' => 'auth']);
