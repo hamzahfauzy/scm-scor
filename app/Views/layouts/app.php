@@ -522,16 +522,29 @@
     <!-- Kaiadmin JS -->
     <script src="/assets/js/kaiadmin.min.js"></script>
     <script>
-    $('select#bahan_baku_id').change(function(){
+    $('select#bahan_baku_id, select#supplier_id').change(function(){
+      loadStok()
+    })
+
+    function loadStok()
+    {
       $('#jumlah').val(0)
-      const val = $(this).val()
-      fetch('/detail-bahan-baku/' + val)
+      const val = $('select#bahan_baku_id').val()
+      const suppId = $('select#supplier_id').val()
+      fetch('/detail-bahan-baku/' + val + '/' + suppId)
       .then(res => res.json())
       .then(res => {
         console.log(res)
-        $('#jumlah').val(res.data.stok_supplier)
+        if(res.data)
+        {
+          $('#jumlah').val(res.data.stok)
+        }
+        else
+        {
+          
+        }
       })
-    })
+    }
     </script>
   </body>
 </html>

@@ -7,6 +7,9 @@ trait CrudTrait {
     protected $model;
     protected $slug = 'crud';
     protected $title = 'Crud';
+    protected $canAdd = true;
+    protected $canEdit = true;
+    protected $canDelete = true;
 
     protected function getModel()
     {

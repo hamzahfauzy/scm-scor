@@ -5,7 +5,9 @@ namespace App\Controllers\Scm;
 use App\Controllers\CrudController;
 use App\Models\Scm\Komposisi;
 use App\Models\Scm\Produk;
+use App\Models\Scm\BahanBaku;
 use App\Models\Scm\Produksi;
+use App\Models\Scm\Informasi;
 use App\Models\Scm\Stok;
 
 class ProduksiController extends CrudController {
@@ -101,6 +103,18 @@ class ProduksiController extends CrudController {
                 'keterangan' => 'jangan diubah -> produksi_id:' . $data,
                 'tanggal_pesan' => $request['tanggal']
             ]);
+
+            $bahanBaku = (new BahanBaku)->select('tb_bahan_baku.*, 
+                            CASE WHEN COALESCE((SELECT SUM(jumlah) FROM tb_bahan_baku_stok WHERE bahan_baku_id = tb_bahan_baku.id),0) < tb_bahan_baku.stok_minimum THEN "Warning" ELSE "OK" END as status_stok')
+                            ->where('id', $item['bahan_baku_id'])
+                            ->first();
+            if($bahanBaku['status_stok'] == 'Warning')
+            {
+                (new Informasi)->insert([
+                    'bahan_baku_id' => $item['bahan_baku_id'],
+                    'keterangan' => 'Stok untuk bahan baku '.$bahanBaku['nama'].' telah berstatus warning. Jangan lupa untuk memesan agar stok terjaga'
+                ]);
+            }
         }
     }
     

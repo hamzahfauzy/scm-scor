@@ -14,7 +14,9 @@
                 <th><?=$column['label']?></th>
                 <?php endforeach ?>
                 <th>
+                    <?php if($canAdd): ?>
                     <a href="<?=site_url("/$page_slug/create" . (isset($_GET['filter']) ? '?'.http_build_query($_GET) : ''))?>" class="btn btn-success btn-sm">Tambah Data</a>
+                    <?php endif ?>
                 </th>
             </tr>
         </thead>
@@ -28,12 +30,17 @@
                 <td>
                     <?= $detail_button($list) ?>
                     
+                    <?php if($canEdit): ?>
                     <a href="<?= site_url("/$page_slug/$list[id]/edit" . (isset($_GET['filter']) ? '?'.http_build_query($_GET) : '')) ?>" class="btn btn-sm btn-warning">Edit</a>
+                    <?php endif ?>
+
+                    <?php if($canDelete): ?>
                     <form action="<?= site_url("/$page_slug/$list[id]" . (isset($_GET['filter']) ? '?'.http_build_query($_GET) : '')) ?>" method="post" style="display:inline;">
                         <?= csrf_field() ?>
                         <input type="hidden" name="_method" value="DELETE">
                         <button type="submit" onclick="return confirm('Apakah kamu yakin akan menghapus data ini?')" class="btn btn-sm btn-danger">Hapus</button>
                     </form>
+                    <?php endif ?>
                 </td>
             </tr>
             <?php endforeach ?>

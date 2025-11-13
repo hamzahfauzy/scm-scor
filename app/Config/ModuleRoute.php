@@ -11,6 +11,7 @@ class ModuleRoute {
             'penjualan-produk' => 'Scm\PenjualanProdukController',
             'retur-produk' => 'Scm\ReturProdukController',
             'stok' => 'Scm\StokController',
+            // 'informasi' => 'Scm\InformasiController',
         ];
     }
 }

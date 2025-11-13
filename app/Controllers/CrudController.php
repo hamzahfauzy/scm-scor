@@ -35,6 +35,9 @@ class CrudController extends BaseController
             'detail_button' => function($data){
                 return $this->detailButton($data);
             },
+            'canAdd' => $this->canAdd,
+            'canEdit' => $this->canEdit,
+            'canDelete' => $this->canDelete,
             'columns' => $this->columns()
         ]);
     }

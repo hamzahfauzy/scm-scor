@@ -9,6 +9,8 @@ use App\Models\Scm\Supplier;
 class BahanBakuController extends CrudController {
 
     protected $model = BahanBaku::class;
+    // protected $canEdit = false;
+    protected $canDelete = false;
 
     protected function getTitle()
     {
@@ -26,7 +28,7 @@ class BahanBakuController extends CrudController {
         $model->select('tb_bahan_baku.*, 
                             tb_supplier.nama nama_supplier,
                             COALESCE((SELECT SUM(jumlah) FROM tb_bahan_baku_stok WHERE bahan_baku_id = tb_bahan_baku.id), 0) total_stok, 
-                            CASE WHEN COALESCE((SELECT SUM(jumlah) FROM tb_bahan_baku_stok WHERE bahan_baku_id = tb_bahan_baku.id),0) < 3 THEN "<span class=\"badge badge-warning\">Warning</span>" ELSE "<span class=\"badge badge-success\">OK</span>" END as status_stok')
+                            CASE WHEN COALESCE((SELECT SUM(jumlah) FROM tb_bahan_baku_stok WHERE bahan_baku_id = tb_bahan_baku.id),0) < tb_bahan_baku.stok_minimum THEN "<span class=\"badge badge-warning\">Warning</span>" ELSE "<span class=\"badge badge-success\">OK</span>" END as status_stok')
                 ->join('tb_supplier','tb_supplier.user_id=tb_bahan_baku.supplier_id', 'LEFT');
 
         $level = session()->get('level');
@@ -52,9 +54,21 @@ class BahanBakuController extends CrudController {
                 'satuan' => [
                     'label' => 'Satuan'
                 ],
-                'stok_supplier' => [
+                'total_stok' => [
                     'label' => 'Stok'
                 ],
+                'stok_minimum' => [
+                    'label' => 'Stok Minimum'
+                ],
+                'status_stok' => [
+                    'label' => 'Status'
+                ],
+                'harga' => [
+                    'label' => 'Harga'
+                ],
+                // 'stok_supplier' => [
+                //     'label' => 'Stok'
+                // ],
             ];
         }
         else
@@ -72,12 +86,15 @@ class BahanBakuController extends CrudController {
                 'stok_minimum' => [
                     'label' => 'Stok Minimum'
                 ],
-                'status_stok' => [
-                    'label' => 'Status'
+                'harga' => [
+                    'label' => 'Harga'
                 ],
-                'nama_supplier' => [
-                    'label' => 'Supplier'
-                ],
+                // 'status_stok' => [
+                //     'label' => 'Status'
+                // ],
+                // 'nama_supplier' => [
+                //     'label' => 'Supplier'
+                // ],
             ];
         }
     }
@@ -103,7 +120,7 @@ class BahanBakuController extends CrudController {
             {
                 $options[$item['user_id']] = $item['nama'];
             }
-            return [
+            $fields = [
                 'nama' => [
                     'label' => 'Nama',
                     'type' => 'text',
@@ -116,26 +133,37 @@ class BahanBakuController extends CrudController {
                     'label' => 'Stok Minimum',
                     'type' => 'number',
                 ],
-                'supplier_id' => [
-                    'label' => 'Supplier',
-                    'type' => 'select',
-                    'options' => $options
+                'harga' => [
+                    'label' => 'Harga',
+                    'type' => 'number'
                 ],
+                // 'supplier_id' => [
+                //     'label' => 'Supplier',
+                //     'type' => 'select',
+                //     'options' => $options
+                // ],
             ];
+
+            if($this->record)
+            {
+                // unset($fields['stok_minimum']);
+            }
+
+            return $fields;
         }
     }
 
-    protected function detailButton($data)
-    {
-        $level = session()->get('level');
+    // protected function detailButton($data)
+    // {
+    //     $level = session()->get('level');
         
-        if($level == 'Supplier')
-        {
-            return '';
-        }
+    //     if($level == 'Supplier')
+    //     {
+    //         return '';
+    //     }
 
-        return '<a href="/stok?filter[bahan_baku_id]='.$data['id'].'" class="btn btn-sm btn-info">Stok</a>';
-    }
+    //     return '<a href="/stok?filter[bahan_baku_id]='.$data['id'].'" class="btn btn-sm btn-info">Stok</a>';
+    // }
 
     public function detailBahanBaku($id)
     {

@@ -5,6 +5,7 @@ namespace App\Controllers\Scm;
 use App\Controllers\CrudController;
 use App\Libraries\Page;
 use App\Models\Scm\BahanBaku;
+use App\Models\Scm\BahanBakuSupplier;
 use App\Models\Scm\Stok;
 use App\Models\Scm\Supplier;
 
@@ -38,7 +39,7 @@ class StokController extends CrudController {
         }
         else
         {
-            $model->where('tb_supplier.user_id', session()->get('id'));
+            $model->where('tb_supplier.user_id', session()->get('id'))->where('tb_bahan_baku_stok.status', 'REQUEST');
         }
 
         return $model;
@@ -88,6 +89,9 @@ class StokController extends CrudController {
             'detail_button' => function($data){
                 return $data['status'] == 'REQUEST' ? '<a href="/stok/confirm/'.$data['id'].'" class="btn btn-sm btn-success" onclick="return confirm(\'Apakah anda yakin konfirmasi permintaan ini ?\')">Konfirmasi</a>' : '';
             },
+            'canAdd' => $this->canAdd,
+            'canEdit' => $this->canEdit,
+            'canDelete' => $this->canDelete,
             'columns' => $this->columns()
         ]);
     }
@@ -179,10 +183,11 @@ class StokController extends CrudController {
     function confirm($id)
     {
         $stok = (new Stok)->find($id);
-        $bahanBaku = (new BahanBaku)->find($stok->bahan_baku_id);
+        $supplier = (new Supplier)->find($stok['supplier_id']);
+        $bahanBaku = (new BahanBakuSupplier)->where('bahan_baku_id', $stok['bahan_baku_id'])->where('supplier_id', $supplier['user_id'])->first();
 
-        (new BahanBaku)->update($id, [
-            'stok_supplier' => $bahanBaku->stok_supplier - $stok->jumlah
+        (new BahanBakuSupplier)->update($bahanBaku['id'], [
+            'stok' => $bahanBaku['stok'] - $stok['jumlah']
         ]);
 
         (new Stok)->update($id, [
